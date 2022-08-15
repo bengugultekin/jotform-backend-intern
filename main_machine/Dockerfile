@@ -3,6 +3,9 @@
 FROM nginx
 
 RUN apt-get update && apt-get install -y openssh-server
+RUN apt-get install php -y
+RUN apt-get install libssh2-1 php-ssh2 -y
+RUN apt update -y && apt install -y nano 
 RUN mkdir /var/run/sshd
 RUN echo 'root:mypassword' | chpasswd
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
