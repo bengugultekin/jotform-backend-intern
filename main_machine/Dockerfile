@@ -2,15 +2,9 @@
 
 FROM nginx
 
-RUN apt-get update && apt-get install -y openssh-server
+RUN apt-get update
 RUN apt-get install php -y
 RUN apt-get install libssh2-1 php-ssh2 -y
 RUN apt update -y && apt install -y nano 
-RUN mkdir /var/run/sshd
-RUN echo 'root:mypassword' | chpasswd
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-EXPOSE 22
 RUN mkdir -p /home/app
 COPY . /home/app
-CMD ["/usr/sbin/sshd", "-D"]
