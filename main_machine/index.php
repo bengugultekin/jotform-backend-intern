@@ -4,7 +4,7 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    $connection = ssh2_connect('ubuntu_client_machine1', 22, [ 'hostkey' => 'ecdsa-sha2-nistp256,ssh-rsa']);
+    $connection = ssh2_connect('ubuntu_client_machine1', 22);
     ssh2_auth_password($connection, 'root', 'mypassword');
 
     $stream = ssh2_exec($connection, 'pwd');
