@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  main-machine:
+   build: ./main_machine
+   container_name: main_server_machine
+   ports:
+    - 5001:80
+  
+  ubuntu-machine:
+   build: ./ubuntu_machine1
+   container_name: ubuntu_client_machine1
