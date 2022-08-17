@@ -9,6 +9,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $app = AppFactory::create();
 
+// List Method
 $app->get('/machines/all', function (Request $request, Response $response) {
     $sql = "SELECT * FROM containers";
     try {
@@ -37,6 +38,7 @@ $app->get('/machines/all', function (Request $request, Response $response) {
     }
 });
 
+// View Method 
 $app->get('/machines/all/{id}', function (Request $request, Response $response, array $args) {
     $id = $args['id'];
     $sql = "SELECT * FROM containers WHERE container_id=$id";
@@ -66,6 +68,7 @@ $app->get('/machines/all/{id}', function (Request $request, Response $response, 
     }
 });
 
+// Delete Method
 $app->get('/machines/del/{id}', function (Request $request, Response $response, array $args) {
     $id = $args['id'];
     $sql = "DELETE FROM containers WHERE container_id = $id ";
@@ -95,19 +98,21 @@ $app->get('/machines/del/{id}', function (Request $request, Response $response, 
     }
 });
 
-// Time type typeDüzeltilecek
+// Create Method 
 $app->post('/machines/add', function (Request $request, Response $response, array $args) {
     $data = $request->getParsedBody();
+    $container_id = $data["container_id"];
     $containername = $data["containername"];
-    $date = date_timestamp_get(date_create());
+    $date = date('Y/m/d h:i:s a', time());
    
-    $sql = "INSERT INTO containers (containername, created_on) VALUES (:containername, :created_on)";
+    $sql = "INSERT INTO containers (container_id, containername, created_on) VALUES (:container_id, :containername, :created_on)";
    
     try {
       $db = new Db();
       $conn = $db->connect();
      
       $stmt = $conn->prepare($sql);
+      $stmt->bindParam(':container_id', $container_id);
       $stmt->bindParam(':containername', $containername);
       $stmt->bindParam(':created_on', $date);
    
@@ -130,4 +135,44 @@ $app->post('/machines/add', function (Request $request, Response $response, arra
     }
    });
 
+   // Update Method
+   $app->put('/machines/update/{container_id}', function (Request $request, Response $response, array $args) {
+
+    $container_id = $request->getAttribute('container_id');
+    $data = $request->getParsedBody();
+    $containername = $data["containername"];
+    $created_on = date('Y/m/d h:i:s a', time());
+
+    $sql = "UPDATE containers SET
+            containername = :containername,
+            created_on = :created_on
+    WHERE container_id = $container_id";
+
+    try {
+        $db = new Db();
+        $conn = $db->connect();
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':containername', $containername);
+        $stmt->bindParam(':created_on', $created_on);
+
+        $result = $stmt->execute();
+
+        $db = null;
+        echo "Update successful! ";
+        $response->getBody()->write(json_encode($result));
+        return $response
+            ->withHeader('content-type', 'application/json')
+            ->withStatus(200);
+    } catch (PDOException $e) {
+        $error = array(
+            "message" => $e->getMessage()
+    );
+
+    $response->getBody()->write(json_encode($error));
+    return $response
+        ->withHeader('content-type', 'application/json')
+        ->withStatus(500);
+    }
+    });
 ?>
