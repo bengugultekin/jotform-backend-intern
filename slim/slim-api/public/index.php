@@ -1,4 +1,5 @@
 <?php
+
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -20,7 +21,8 @@ $app->get('/{name}', function (Request $request, Response $response, array $args
 */
 
 // Machines routes
-require __DIR__ . '/../routes/myRouter.php';
+require __DIR__ . '/../Routes/Router.php';
 
 $app->run();
+
 ?>

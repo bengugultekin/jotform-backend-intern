@@ -11,10 +11,6 @@ class DB {
 
         // make a database connection
         $pdo = new PDO($dsn, $this->usr, $this->password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-        
-        if ($pdo) {
-            echo "Connected to the $this->db_name database successfully!";
-        }
         return $pdo;
     }
 }
