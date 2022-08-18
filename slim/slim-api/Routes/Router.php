@@ -48,6 +48,13 @@ $app->delete('/v1/delete/machine/{id}', function (Request $request, Response $re
     return $data;
 });
 
+// Temporary endpoint ----> IT WILL BE REMOVED
+// CREATE /v1/create/table
+$app->get('/v1/create/table', function (Request $request, Response $response) {
+    $data = CONTROLLER->createTable($request, $response);
+    return $data;
+});
+
 /**
  * Add Error Middleware
  *

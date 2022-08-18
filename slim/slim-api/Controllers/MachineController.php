@@ -103,7 +103,7 @@ class MachineController {
         }
     }
 
-    //PUT update a machine using its id
+    // PUT update a machine using its id
     public function updateMachine(Request $request, Response $response) {
         $id = $request->getAttribute('id');
         $data = $request->getParsedBody();
@@ -138,7 +138,7 @@ class MachineController {
         }
     }
 
-    //DELETE delete a machine
+    // DELETE delete a machine
     public function deleteMachine(Request $request, Response $response, array $args) {
         $id = $args['id'];
         $sql = "DELETE FROM containers WHERE id = $id";
@@ -167,6 +167,36 @@ class MachineController {
                 ->withStatus(500);
         }
     }
-}
 
-?>
+    // Temporary function ----> IT WILL BE REMOVED
+    // Create inital table in the database
+    public function createTable(Request $request, Response $response) {
+        $sql = "CREATE TABLE containers (
+            id serial PRIMARY KEY,
+            container_name VARCHAR (50) UNIQUE NOT NULL,
+            created_at TIMESTAMP NOT NULL);";
+        try {
+            $db = new DB();
+            $conn = $db->connect();
+            $stmt = $conn->query($sql);
+            $machines = $stmt->fetchAll(PDO::FETCH_OBJ);
+    
+            // Make db null so that we do not get error when we do another db request
+            $db = null;
+    
+            $response->getBody()->write(json_encode($machines));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(200);
+        }
+        catch (PDOException $e) {
+            $error = array(
+                "message" => $e->getMessage()
+            );
+            $response->getBody()->write(json_encode($error));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(500);
+        }
+    }
+}
