@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+###NAMESPACE###use Phoenix\Migration\AbstractMigration;
+
+final class ###CLASSNAME### extends AbstractMigration
+{
+###INDENT###protected function up(): void
+###INDENT###{
+###UP###
+###INDENT###}
+
+###INDENT###protected function down(): void
+###INDENT###{
+###DOWN###
+###INDENT###}
+}

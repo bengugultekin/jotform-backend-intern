@@ -1,0 +1,19 @@
+migration_dirs:
+    phoenix: '%%ACTUAL_DIR%%/../testing_migrations/phoenix'
+
+environments:
+    mysql:
+        adapter: mysql
+        host: localhost
+        port: 3306 # optional
+        username: root
+        password: 123
+        db_name: phoenix
+        charset: utf8mb4 # optional
+    pgsql:
+        adapter: pgsql
+        host: localhost
+        username: postgres
+        password: 123
+        db_name: phoenix
+        charset: utf8
