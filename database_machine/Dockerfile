@@ -9,5 +9,3 @@ ENV PGDATA=/var/lib/postgresql/data/pgdata
 RUN apt-get update
 RUN apt update -y && apt install -y nano 
 COPY . /home/app
-
-CMD ["php", "/home/app/DBConnect.php"]

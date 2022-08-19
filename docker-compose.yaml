@@ -1,10 +1,11 @@
 version: '3.9'
 
 services:
-  main-machine:
+  main-service:
    depends_on:
-    - ubuntu-machine
-    - postgresql-machine
+    - ubuntu-service
+    - postgresql-service
+    - one-shot-service
    build: ./main_machine
    container_name: main_server_machine
    ports:
@@ -13,13 +14,22 @@ services:
     - db_network
     - client_network
   
-  ubuntu-machine:
+  one-shot-service:
+   depends_on:
+    - postgresql-service
+   build: ./one_shot_machine
+   container_name: one_shot_container
+   networks:
+    - db_network
+    - client_network
+  
+  ubuntu-service:
    build: ./ubuntu_machine1
    container_name: ubuntu_client_machine1
    networks:
     - client_network
 
-  postgresql-machine:
+  postgresql-service:
     build: ./database_machine
     container_name: postgresql_machine
     restart: always
