@@ -2,6 +2,9 @@ version: '3.9'
 
 services:
   main-machine:
+   depends_on:
+    - ubuntu-machine
+    - postgresql-machine
    build: ./main_machine
    container_name: main_server_machine
    ports:
@@ -16,15 +19,10 @@ services:
    networks:
     - client_network
 
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: db
-      POSTGRES_USER: master
-      POSTGRES_PASSWORD: mypassword
-      PGDATA: /var/lib/postgresql/data/pgdata
+  postgresql-machine:
+    build: ./database_machine
+    container_name: postgresql_machine
+    restart: always
     ports:
       - "5433:5432"     
     volumes:

@@ -7,4 +7,8 @@ RUN apt-get install php -y
 RUN apt-get install libssh2-1 php-ssh2 -y
 RUN apt update -y && apt install -y nano 
 RUN mkdir -p /home/app
-COPY . /home/app
+RUN apt-get install php-pgsql -y
+COPY php.ini /etc/php/7.4/apache2
+COPY ./DBConnect.php /home/app
+
+#CMD [ "php", "/home/app/index.php" ]

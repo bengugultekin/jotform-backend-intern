@@ -1,4 +1,0 @@
-parameters:
-    earlyTerminatingMethodCalls:
-        Phoenix\Database\Adapter\PdoAdapter:
-            - throwError
