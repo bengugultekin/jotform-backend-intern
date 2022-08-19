@@ -1,5 +1,5 @@
 # jotform-backend-intern
-Communation of two docker containers with php-ssh configiration
+Communation of between docker containers with php-ssh configuration
 
 You should create a new directory as shown below:
 
