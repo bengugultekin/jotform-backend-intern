@@ -3,9 +3,8 @@ version: '3.9'
 services:
   main-service:
    depends_on:
-    - ubuntu-service
-    - postgresql-service
-    - one-shot-service
+    one-shot-service:
+     condition: service_completed_successfully
    build: ./main_machine
    container_name: main_server_machine
    ports:

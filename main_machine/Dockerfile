@@ -10,5 +10,6 @@ RUN mkdir -p /home/app
 RUN apt-get install php-pgsql -y
 COPY php.ini /etc/php/7.4/apache2
 COPY ./DBConnect.php /home/app
+COPY ./slim-api /home/slim-api
 
 #CMD [ "php", "/home/app/index.php" ]
