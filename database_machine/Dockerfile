@@ -8,4 +8,5 @@ ENV POSTGRES_PASSWORD=mypassword
 ENV PGDATA=/var/lib/postgresql/data/pgdata
 RUN apt-get update
 RUN apt update -y && apt install -y nano 
+RUN apt install -y curl 
 COPY . /home/app

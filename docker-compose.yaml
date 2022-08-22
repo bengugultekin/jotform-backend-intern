@@ -16,7 +16,8 @@ services:
   
   one-shot-service:
    depends_on:
-    - postgresql-service
+    postgresql-service:
+     condition: service_healthy
    build: ./one_shot_machine
    container_name: one_shot_container
    networks:
@@ -32,6 +33,12 @@ services:
   postgresql-service:
     build: ./database_machine
     container_name: postgresql_machine
+    healthcheck:
+      test: find /var/lib/postgresql/data -iname pgdata || exit 1
+      interval: 5s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
     restart: always
     ports:
       - "5433:5432"     
