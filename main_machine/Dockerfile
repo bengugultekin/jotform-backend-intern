@@ -3,7 +3,8 @@
 FROM nginx
 
 RUN apt-get update
-RUN apt-get install php -y
+#RUN apt-get install php -y
+RUN apt-get install php7.4-fpm -y
 RUN apt-get install libssh2-1 php-ssh2 -y
 RUN apt update -y && apt install -y nano
 RUN mkdir -p /home/app
