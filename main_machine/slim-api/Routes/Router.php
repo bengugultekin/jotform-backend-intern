@@ -26,7 +26,7 @@ $app->get('/v1/machines', function (Request $request, Response $response) {
 
 // GET /v1/machine/{id}
 $app->get('/v1/machine/{id}', function (Request $request, Response $response, array $args) {
-    $data = CONTROLLER->getAllMachines($request, $response, $args);
+    $data = CONTROLLER->getMachine($request, $response, $args);
     return $data;
 });
 
