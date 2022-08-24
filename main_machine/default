@@ -1,0 +1,31 @@
+server {
+  # Example PHP Nginx FPM config file
+  listen 80;
+  root /home/slim-api/public;
+
+  # Add index.php to setup Nginx, PHP & PHP-FPM config
+  index index.php;
+
+  server_name _;
+
+  location / {
+    try_files $uri /index.php$is_args$args;
+  }
+
+  # pass PHP scripts on Nginx to FastCGI (PHP-FPM) server
+  location ~ \.php$ {
+    try_files $uri =404;
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+    fastcgi_index index.php;
+    fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+  }
+
+  # deny access to Apache .htaccess on Nginx with PHP, 
+  # if Apache and Nginx document roots concur
+  location ~ /\.ht {
+    deny all;
+  }
+} # End of PHP FPM Nginx config example
