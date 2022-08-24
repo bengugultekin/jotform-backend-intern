@@ -6,7 +6,7 @@ use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../Config/Config.php';
-
+require __DIR__ . '/SSH2Connection.php';
 
 class MachineController {
 
@@ -168,23 +168,23 @@ class MachineController {
         }
     }
 
-    // Temporary function ----> IT WILL BE REMOVED
-    // Create inital table in the database
-    public function createTable(Request $request, Response $response) {
-        $sql = "CREATE TABLE containers (
-            id serial PRIMARY KEY,
-            container_name VARCHAR (50) UNIQUE NOT NULL,
-            created_at TIMESTAMP NOT NULL);";
+    // POST execute a command on machine
+    
+    public function executeCommand(Request $request, Response $response, array $args) {
+        $id = $args['id'];
+        $user_cmd = $request->getParsedBody()['command'];
+        $sql = "SELECT container_name FROM containers WHERE id = $id";
         try {
             $db = new DB();
             $conn = $db->connect();
+
             $stmt = $conn->query($sql);
-            $machines = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
+            $machine = $stmt->fetch(PDO::FETCH_OBJ);
+
             // Make db null so that we do not get error when we do another db request
             $db = null;
-    
-            $response->getBody()->write(json_encode($machines));
+
+            $response->getBody(SSH2Connection($machine->container_name, $user_cmd));
             return $response
                 ->withHeader("content-type", "application/json")
                 ->withStatus(200);

@@ -5,7 +5,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
-
 require __DIR__ . '/../Controllers/MachineController.php';
 
 $app = AppFactory::create();
@@ -16,7 +15,6 @@ define('CONTROLLER', new MachineController());
   * Otherwise exceptions thrown from it will not be handled by the middleware
   */
 $app->addRoutingMiddleware();
-
 
 // GET /v1/machines
 $app->get('/v1/machines', function (Request $request, Response $response) {
@@ -48,10 +46,9 @@ $app->delete('/v1/delete/machine/{id}', function (Request $request, Response $re
     return $data;
 });
 
-// Temporary endpoint ----> IT WILL BE REMOVED
-// CREATE /v1/create/table
-$app->get('/v1/create/table', function (Request $request, Response $response) {
-    $data = CONTROLLER->createTable($request, $response);
+//POST /v1/machine/{id}/exec
+$app->post('/v1/machine/{id}/exec', function (Request $request, Response $response, array $args ) {
+    $data = CONTROLLER->executeCommand($request, $response, $args);
     return $data;
 });
 
