@@ -1,0 +1,18 @@
+{
+    "name": "bengu/slim-from-scratch",
+    "autoload": {
+        "psr-4": {
+            "bengu\\SlimFromScratch\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "bengugultekin",
+            "email": "bengunurgultekin54@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^4.10",
+        "laminas/laminas-diactoros": "^2.14"
+    }
+}
