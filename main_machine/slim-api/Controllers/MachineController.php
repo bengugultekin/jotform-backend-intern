@@ -183,11 +183,18 @@ class MachineController {
 
             // Make db null so that we do not get error when we do another db request
             $db = null;
-
-            $response->getBody(SSH2Connection($machine->container_name, $user_cmd));
-            return $response
-                ->withHeader("content-type", "application/json")
-                ->withStatus(200);
+            if ($machine != false) {
+                $response->getBody(SSH2Connection($machine->container_name, $user_cmd));
+                return $response
+                    ->withHeader("content-type", "application/json")
+                    ->withStatus(200);
+            }
+            else {
+                $response->getBody()->write(json_encode("Request entity cannot be processed by the server"));
+                return $response
+                    ->withHeader("content-type", "application/json")
+                    ->withStatus(422);
+            }
         }
         catch (PDOException $e) {
             $error = array(
