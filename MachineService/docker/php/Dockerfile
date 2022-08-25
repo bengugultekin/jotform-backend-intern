@@ -16,3 +16,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN git config --global user.email "bengunurgultekin54@gmail.com" \
     && git config --global user.name "bengugultekin"
+RUN apt update
+
+RUN apt-get install -y libssh2-1-dev libssh2-1 \
+    && pecl install ssh2-1.3.1 \
+    && docker-php-ext-enable ssh2

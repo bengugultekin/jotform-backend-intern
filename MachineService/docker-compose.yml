@@ -38,3 +38,7 @@ services:
         type: bind
         source: /home/tmp/postgresql/data
         target: /var/lib/postgresql/data
+  
+  ubuntu-service:
+   build: ./docker/ubuntu1
+   container_name: ubuntu_client_machine1

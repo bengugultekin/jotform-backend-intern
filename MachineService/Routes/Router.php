@@ -60,6 +60,11 @@ $app->get('/v1/create/table', function (Request $request, Response $response) {
     return $data;
 });
 
+$app->get('/v1/exec/machine', function(Request $request, Response $response) {
+    $data = CONTROLLER->connectMachine($request, $response);
+    return $data;
+});
+
 /**
  * Add Error Middleware
  *
