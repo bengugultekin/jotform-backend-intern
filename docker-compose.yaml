@@ -5,10 +5,21 @@ services:
    depends_on:
     one-shot-service:
      condition: service_completed_successfully
+    php-service:
+     condition: service_started
    build: ./main_machine
    container_name: main_server_machine
    ports:
     - 5001:80
+   networks:
+    - db_network
+    - client_network
+
+  php-service:
+   build: ./php_machine
+   container_name: php_machine
+   ports:
+    - '9000:9000'
    networks:
     - db_network
     - client_network
