@@ -1,8 +1,8 @@
 <?php
 
 class DB {
-    private $host = "postgresql_machine";
-    private $usr = "mypostgres";
+    private $host = "localhost";
+    private $usr = "postgres";
     private $password = "mypassword";
     private $db_name = "container_db";
 
