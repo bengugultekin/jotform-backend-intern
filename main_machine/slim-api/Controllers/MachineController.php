@@ -2,7 +2,6 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../Config/Config.php';
@@ -16,10 +15,8 @@ class MachineController {
         try {
             $db = new DB();
             $conn = $db->connect();
-    
             $stmt = $conn->query($sql);
             $machines = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
             // Make db null so that we do not get error when we do another db request
             $db = null;
             
@@ -42,21 +39,28 @@ class MachineController {
     // GET get a machine using its id
     public function getMachine(Request $request, Response $response, array $args) {
         $id = $args['id'];
-        $sql = "SELECT * FROM containers WHERE id = $id";
+        $sql = "SELECT * FROM containers WHERE id = :id";
         try {
             $db = new DB();
             $conn = $db->connect();
-    
-            $stmt = $conn->query($sql);
-            $machines = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
-            // Make db null so that we do not get error when we do another db request
-            $db = null;
-            
-            $response->getBody()->write(json_encode($machines));
-            return $response
-                ->withHeader("content-type", "application/json")
-                ->withStatus(200);
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            if ($stmt->execute()) {
+                $machine = $stmt->fetchAll(PDO::FETCH_OBJ);
+                // Make db null so that we do not get error when we do another db request
+                $db = null;
+                
+                $response->getBody()->write(json_encode($machine));
+                return $response
+                    ->withHeader("content-type", "application/json")
+                    ->withStatus(200);
+            }
+            else {
+                $response->getBody()->write(json_encode("Error in executing SQL state"));
+                return $response
+                    ->withHeader("content-type", "application/json")
+                    ->withStatus(404);
+            }
         } 
         catch (PDOException $e) {
             $error = array(
@@ -77,13 +81,10 @@ class MachineController {
         try {
             $db = new DB();
             $conn = $db->connect();
-
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':container_name', $container_name);
             $stmt->bindParam(':created_at', $cur_date);
-
             $result = $stmt->execute();
-
             // Make db null so that we do not get error when we do another db request
             $db = null;
             
@@ -109,18 +110,18 @@ class MachineController {
         $data = $request->getParsedBody();
         $container_name = $data["container_name"];
 
-        $sql = "UPDATE containers SET container_name = :container_name WHERE id = $id";
+        $sql = "UPDATE containers SET container_name = :container_name WHERE id = :id";
 
         try {
             $db = new DB();
-            $conn = $db->connect();
-            
+            $conn = $db->connect();   
             $stmt = $conn->prepare($sql);
+            $stmt->bindParam(":id", $id);
             $stmt->bindParam(':container_name', $container_name);
-
             $result = $stmt->execute();
-
+            // Make db null so that we do not get error when we do another db request
             $db = null;
+
             echo "Update successful! ";
             $response->getBody()->write(json_encode($result));
             return $response
@@ -141,18 +142,18 @@ class MachineController {
     // DELETE delete a machine
     public function deleteMachine(Request $request, Response $response, array $args) {
         $id = $args['id'];
-        $sql = "DELETE FROM containers WHERE id = $id";
+        $sql = "DELETE FROM containers WHERE id = :id";
         try {
             $db = new DB();
             $conn = $db->connect();
-
-            $stmt = $conn->query($sql);
-            $machines = $stmt->fetchAll(PDO::FETCH_OBJ);
-
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(":id", $id);    
+            $result = $stmt->execute();
             // Make db null so that we do not get error when we do another db request
             $db = null;
 
-            $response->getBody()->write(json_encode($machines));
+            echo "Delete successful! ";
+            $response->getBody()->write(json_encode($result));
             return $response
                 ->withHeader("content-type", "application/json")
                 ->withStatus(200);
@@ -169,31 +170,37 @@ class MachineController {
     }
 
     // POST execute a command on machine
-    
     public function executeCommand(Request $request, Response $response, array $args) {
         $id = $args['id'];
         $user_cmd = $request->getParsedBody()['command'];
-        $sql = "SELECT container_name FROM containers WHERE id = $id";
+        $sql = "SELECT container_name FROM containers WHERE id = :id";
         try {
             $db = new DB();
             $conn = $db->connect();
-
-            $stmt = $conn->query($sql);
-            $machine = $stmt->fetch(PDO::FETCH_OBJ);
-
-            // Make db null so that we do not get error when we do another db request
-            $db = null;
-            if ($machine != false) {
-                $response->getBody(SSH2Connection($machine->container_name, $user_cmd));
-                return $response
-                    ->withHeader("content-type", "application/json")
-                    ->withStatus(200);
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            if ($stmt->execute()) {
+                $machine = $stmt->fetch(PDO::FETCH_OBJ);
+                // Make db null so that we do not get error when we do another db request
+                $db = null;
+                if ($machine != false) {
+                    $response->getBody(SSH2Connection($machine->container_name, $user_cmd));
+                    return $response
+                        ->withHeader("content-type", "application/json")
+                        ->withStatus(200);
+                }
+                else {
+                    $response->getBody()->write(json_encode("Request entity cannot be processed by the server"));
+                    return $response
+                        ->withHeader("content-type", "application/json")
+                        ->withStatus(404);
+                }
             }
             else {
-                $response->getBody()->write(json_encode("Request entity cannot be processed by the server"));
+                $response->getBody()->write(json_encode("Error in executing SQL state"));
                 return $response
                     ->withHeader("content-type", "application/json")
-                    ->withStatus(422);
+                    ->withStatus(404);
             }
         }
         catch (PDOException $e) {
