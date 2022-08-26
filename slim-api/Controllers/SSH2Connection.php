@@ -12,10 +12,11 @@ function SSH2Connection($container_name, $command) {
         $stream = ssh2_exec($connection, $command);
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
-        echo stream_get_contents($stream_out);
+        $result = stream_get_contents($stream_out);
+        return $result;
     }
     else {
-        echo "Failed to connect";
+        return "Failed to connect";
     }
 }
 ?>

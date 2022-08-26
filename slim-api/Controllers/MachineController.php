@@ -179,12 +179,30 @@ class MachineController {
             $conn = $db->connect();
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(":id", $id);
+
+            // Check if SQL is correct
             if ($stmt->execute()) {
                 $machine = $stmt->fetch(PDO::FETCH_OBJ);
-                // Make db null so that we do not get error when we do another db request
-                $db = null;
+
+                // Check if machine exists in the database
                 if ($machine != false) {
-                    $response->getBody(SSH2Connection($machine->container_name, $user_cmd));
+                    $exec_result = SSH2Connection($machine->container_name, $user_cmd);
+                    
+                    //Set new sql query to insert it into executions table
+                    $cur_date = date_timestamp_get(date_create());
+                    $sql = "INSERT INTO executions (container_id, exec_command, exec_response, exec_time) 
+                            VALUES (:container_id, :exec_command, :exec_response, to_timestamp(:exec_time))";
+
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bindParam(':container_id', $id);
+                    $stmt->bindParam(':exec_command', $user_cmd);
+                    $stmt->bindParam(':exec_response', $exec_result);
+                    $stmt->bindParam(':exec_time', $cur_date);
+                    $result = $stmt->execute();
+                    // Make db null so that we do not get error when we do another db request
+                    $db = null;
+
+                    $response->getBody()->write($exec_result);
                     return $response
                         ->withHeader("content-type", "application/json")
                         ->withStatus(200);

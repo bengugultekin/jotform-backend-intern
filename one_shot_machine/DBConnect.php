@@ -14,8 +14,8 @@ class DB {
         return $pdo;
     }
 
-    // Create inital table in the database
-    public function createTable() {
+    // Create inital containers table in the database
+    public function createContainersTable() {
         $sql = "CREATE TABLE containers (
             id serial PRIMARY KEY,
             container_name VARCHAR (50) UNIQUE NOT NULL,
@@ -24,7 +24,27 @@ class DB {
             $db = new DB();
             $conn = $db->connect();
             $stmt = $conn->query($sql);
-            echo "Table containers created successfully";
+            echo "Table containers created successfully\n";
+            $db = null;
+        }
+        catch(PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    // Create inital executions table in the database
+    public function createExecutionsTable() {
+        $sql = "CREATE TABLE executions (
+            id serial PRIMARY KEY,
+            container_id int NOT NULL,
+            exec_command VARCHAR (100),
+            exec_response VARCHAR (500),
+            exec_time TIMESTAMP NOT NULL);";
+        try {
+            $db = new DB();
+            $conn = $db->connect();
+            $stmt = $conn->query($sql);
+            echo "Table executions created successfully\n";
             $db = null;
         }
         catch(PDOException $e) {
@@ -35,6 +55,7 @@ class DB {
 
 $test = new DB();
 $test->connect();
-$test->createTable();
+$test->createContainersTable();
+$test->createExecutionsTable();
 
 ?>

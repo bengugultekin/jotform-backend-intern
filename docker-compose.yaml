@@ -63,7 +63,7 @@ services:
     volumes:
       - 
         type: bind
-        source: /home/tmp/postgresql/data
+        source: ./postgresql_data
         target: /var/lib/postgresql/data
     networks:
       - db_network
