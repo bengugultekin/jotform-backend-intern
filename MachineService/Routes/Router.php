@@ -60,8 +60,13 @@ $app->get('/v1/create/table', function (Request $request, Response $response) {
     return $data;
 });
 
-$app->get('/v1/exec/machine', function(Request $request, Response $response) {
-    $data = CONTROLLER->connectMachine($request, $response);
+$app->post('/v1/machine/{id}/exec', function (Request $request, Response $response, array $args ) {
+    $data = CONTROLLER->executeCommand($request, $response, $args);
+    return $data;
+});
+
+$app->get('/v1/executions', function (Request $request, Response $response) {
+    $data = CONTROLLER->getAllExecutions($request, $response);
     return $data;
 });
 

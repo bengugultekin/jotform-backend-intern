@@ -33,11 +33,30 @@ class DB {
         }
     }
 
+    public function createExecTable() {
+        $sql = "CREATE TABLE execution (
+            id serial PRIMARY KEY,
+            container_id int NOT NULL,
+            exec_command VARCHAR (100),
+            exec_response VARCHAR (500),
+            exec_time TIMESTAMP NOT NULL);";
+        try {
+            $db = new DB();
+            $conn = $db->connect();
+            $stmt = $conn->query($sql);
+            echo "Table execution created successfully";
+            $db = null;
+        }
+        catch(PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
 
 }
 
 $test = new DB();
 $test->connect();
 //$test->createTable();
-
+//$test->createExecTable();
 ?>

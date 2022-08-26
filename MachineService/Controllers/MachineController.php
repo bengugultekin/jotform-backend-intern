@@ -2,10 +2,10 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
 
-require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../Config/DBConnect.php';
+require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/SSH2Connection.php';
 
 
 class MachineController {
@@ -200,19 +200,113 @@ class MachineController {
         }
     }
 
-    public function connectMachine (Request $request, Response $response) {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
+    public function executeCommand(Request $request, Response $response, array $args) {
+        $id = $args['id'];
+        //var_dump($args);
+        //var_dump($request->getBody()->getContents());
+        $command = $request->getParsedBody()['command'];
+        $sql = "SELECT container_name FROM containers WHERE id = :id";
+        try {
+            $db = new DB();
+            $conn = $db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            if ($stmt->execute()) {
+                $machine = $stmt->fetch(PDO::FETCH_OBJ);
+                // Make db null so that we do not get error when we do another db request
+                $db = null;
+                if ($machine != false) {
+                    $response->getBody()->write(SSH2Connection($machine->container_name, $command));
+                    $container_id = $id;
+                    $exec_command = $request->getParsedBody()['command'];
+                    $exec_response = $response->getBody(SSH2Connection($machine->container_name, $command));
+                    $exec_time = date_timestamp_get(date_create());
+                    $sql = "INSERT INTO execution (container_id, exec_command, exec_response, exec_time) VALUES (:container_id, :exec_command, :exec_response, to_timestamp(:exec_time))";
+                    try {
+                        $db = new DB();
+                        $conn = $db->connect();
 
-        $connection = ssh2_connect('ubuntu_client_machine1', 22);
-        ssh2_auth_password($connection, 'root', 'mypassword');
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bindParam(':container_id', $container_id);
+                        $stmt->bindParam(':exec_command', $exec_command);
+                        $stmt->bindParam(':exec_response', $exec_response);
+                        $stmt->bindParam(':exec_time', $exec_time);
 
-        $stream = ssh2_exec($connection, 'pwd');
-        stream_set_blocking($stream, true);
-        $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
-        // echo stream_get_contents($stream_out);
-        $response->getBody()->write(json_encode(stream_get_contents($stream_out)));
-        return $response;
+                        $result = $stmt->execute();
+
+                        // Make db null so that we do not get error when we do another db request
+                        $db = null;
+                        
+                        $response->getBody()->write(json_encode($result));
+                        return $response
+                            ->withHeader("content-type", "application/json")
+                            ->withStatus(200);
+                    } 
+                    catch (PDOException $e) {
+                        $error = array(
+                            "message" => $e->getMessage()
+                        );
+                        $response->getBody()->write(json_encode($error));
+                        return $response
+                            ->withHeader("content-type", "application/json")
+                            ->withStatus(500);
+                    }
+
+                    return $response
+                        ->withHeader("content-type", "application/json")
+                        ->withStatus(200);
+                }
+                else {
+                    $response->getBody()->write(json_encode("Request entity cannot be processed by the server"));
+                    return $response
+                        ->withHeader("content-type", "application/json")
+                        ->withStatus(404);
+                }
+            }
+            else {
+                $response->getBody()->write(json_encode("Error in executing SQL state"));
+                return $response
+                    ->withHeader("content-type", "application/json")
+                    ->withStatus(404);
+            }
+        }
+        catch (PDOException $e) {
+            $error = array(
+                "message" => $e->getMessage()
+            );
+            $response->getBody()->write(json_encode($error));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(500);
+        }
+    }
+    
+    // GET get all machines in the database
+    public function getAllExecutions(Request $request, Response $response) {
+        $sql = "SELECT * FROM execution";
+        try {
+            $db = new DB();
+            $conn = $db->connect();
+    
+            $stmt = $conn->query($sql);
+            $machines = $stmt->fetchAll(PDO::FETCH_OBJ);
+    
+            // Make db null so that we do not get error when we do another db request
+            $db = null;
+            
+            $response->getBody()->write(json_encode($machines));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(200);
+        } 
+        catch (PDOException $e) {
+            $error = array(
+                "message" => $e->getMessage()
+            );
+            $response->getBody()->write(json_encode($error));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(500);
+        }
     }
 }
