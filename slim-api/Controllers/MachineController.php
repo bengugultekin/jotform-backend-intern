@@ -231,4 +231,31 @@ class MachineController {
                 ->withStatus(500);
         }
     }
+
+    // GET get all executions in the database
+    public function getAllExecutions(Request $request, Response $response) {
+        $sql = "SELECT * FROM executions";
+        try {
+            $db = new DB();
+            $conn = $db->connect();
+            $stmt = $conn->query($sql);
+            $executions = $stmt->fetchAll(PDO::FETCH_OBJ);
+            // Make db null so that we do not get error when we do another db request
+            $db = null;
+            
+            $response->getBody()->write(json_encode($executions));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(200);
+        } 
+        catch (PDOException $e) {
+            $error = array(
+                "message" => $e->getMessage()
+            );
+            $response->getBody()->write(json_encode($error));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(500);
+        }
+    }
 }

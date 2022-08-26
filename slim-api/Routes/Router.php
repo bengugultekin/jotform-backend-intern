@@ -52,6 +52,12 @@ $app->post('/v1/machine/{id}/exec', function (Request $request, Response $respon
     return $data;
 });
 
+// GET /v1/executions
+$app->get('/v1/executions', function (Request $request, Response $response) {
+    $data = CONTROLLER->getAllExecutions($request, $response);
+    return $data;
+});
+
 /**
  * Add Error Middleware
  *
