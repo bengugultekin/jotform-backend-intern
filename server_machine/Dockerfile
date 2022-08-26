@@ -8,9 +8,7 @@ RUN apt install software-properties-common -y
 RUN add-apt-repository ppa:ondrej/php
 RUN apt update
 RUN apt install nginx libssh2-1 php8.1-fpm php8.1-pgsql php8.1-ssh2 nano composer -y
-RUN mkdir -p /home/slim
-
+RUN mkdir -p /home/slim/slim-api
 COPY ./DBConnect.php /home/slim/
-COPY ./slim-api /home/slim/slim-api
 COPY ./default /etc/nginx/sites-available/
 CMD ["nginx", "-g", "daemon off;"]

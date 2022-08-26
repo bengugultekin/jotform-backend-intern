@@ -1,16 +1,20 @@
 version: '3.9'
 
 services:
-  main-service:
+  server-service:
    depends_on:
     one-shot-service:
      condition: service_completed_successfully
     php-service:
      condition: service_started
-   build: ./main_machine
-   container_name: main_server_machine
+   build: ./server_machine
+   container_name: server_machine
    ports:
     - 5001:80
+   volumes:
+    - type: bind
+      source: ./slim-api
+      target: /home/slim/slim-api
    networks:
     - db_network
     - client_network
@@ -20,6 +24,10 @@ services:
    container_name: php_machine
    ports:
     - '9000:9000'
+   volumes:
+    - type: bind
+      source: ./slim-api
+      target: /home/slim/slim-api
    networks:
     - db_network
     - client_network

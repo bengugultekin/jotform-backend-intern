@@ -173,6 +173,7 @@ class MachineController {
     public function executeCommand(Request $request, Response $response, array $args) {
         $id = $args['id'];
         $user_cmd = $request->getParsedBody()['command'];
+        echo $user_cmd;
         $sql = "SELECT container_name FROM containers WHERE id = :id";
         try {
             $db = new DB();
