@@ -29,6 +29,7 @@ class DB {
         }
         catch(PDOException $e) {
             echo $e->getMessage();
+            echo "\n";
         }
     }
 
@@ -38,7 +39,7 @@ class DB {
             id serial PRIMARY KEY,
             container_id int NOT NULL,
             exec_command VARCHAR (100),
-            exec_response VARCHAR (500),
+            exec_response text,
             exec_time TIMESTAMP NOT NULL);";
         try {
             $db = new DB();
@@ -49,6 +50,7 @@ class DB {
         }
         catch(PDOException $e) {
             echo $e->getMessage();
+            echo "\n";
         }
     }
 }

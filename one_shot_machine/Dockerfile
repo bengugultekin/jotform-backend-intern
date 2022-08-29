@@ -6,9 +6,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get install php -y
 RUN apt update -y && apt install -y nano 
-RUN mkdir -p /home/app
+RUN mkdir -p /home/db_scripts
 RUN apt-get install php-pgsql -y
 COPY php.ini /etc/php/7.4/apache2
-COPY ./DBConnect.php /home/app
+COPY ./DBConnect.php /home/db_scripts
 
-CMD [ "php", "/home/app/DBConnect.php" ]
+CMD [ "php", "/home/db_scripts/DBConnect.php" ]
