@@ -1,6 +1,5 @@
 <?php
-$url = "http://server_machine:80/v1/machine/1/exec";
-#$url = "http://localhost:9000/v1/machine/1/exec";
+$url = "http://server_machine/v1/machine/1/exec";
 
 $data = array('command' => 'pwd');
 
