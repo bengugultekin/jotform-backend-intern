@@ -7,9 +7,10 @@ RUN apt install software-properties-common -y
 RUN mkdir -p /home/slim/slim-api
 RUN apt-get install -y libssh2-1-dev libssh2-1 \
     && pecl install ssh2-1.3.1 \
-    && docker-php-ext-enable ssh2
+    && docker-php-ext-enable ssh2 && apt-get install curl -y
 
 COPY ./ExecuteCommand.php /home
+#COPY ./xxx-devilbox-default-php.ini /usr/local/etc/php/conf.d
 # Copy hello-cron file to the cron.d directory
 COPY php-script-cron /etc/cron.d/php-script-cron
  
