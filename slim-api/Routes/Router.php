@@ -6,9 +6,11 @@ use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../Controllers/MachineController.php';
+require __DIR__ . '/../Controllers/CronjobController.php';
 
 $app = AppFactory::create();
-define('CONTROLLER', new MachineController());
+define('MACHINE_CONTROLLER', new MachineController());
+define('CRONJOB_CONTROLLER', new CronjobController());
 
 /**
   * The routing middleware should be added earlier than the ErrorMiddleware
@@ -24,47 +26,63 @@ $app->get('/', function (Request $request, Response $response) {
 // GET /v1/machines
 $app->get('/v1/machines', function (Request $request, Response $response) {
     #require __DIR__ . '/../Views/machinesView.php';
-    $data = CONTROLLER->getAllMachines($request, $response);
+    $data = MACHINE_CONTROLLER->getAllMachines($request, $response);
     return $data;
 });
 
 // GET /v1/machine/{id}
 $app->get('/v1/machine/{id}', function (Request $request, Response $response, array $args) {
     #require __DIR__ . '/../Views/machineView.php';
-    $data = CONTROLLER->getMachine($request, $response, $args);
+    $data = MACHINE_CONTROLLER->getMachine($request, $response, $args);
     return $data;
 });
 
 // POST /v1/add/machine
 $app->post('/v1/add/machine', function (Request $request, Response $response) { 
-    $data = CONTROLLER->addMachine($request, $response);
+    $data = MACHINE_CONTROLLER->addMachine($request, $response);
     return $data;
 });
 
 // PUT /v1/update/machine/{id}
 $app->put('/v1/update/machine/{id}', function (Request $request, Response $response) {
-    $data = CONTROLLER->updateMachine($request, $response);
+    $data = MACHINE_CONTROLLER->updateMachine($request, $response);
     return $data;
  });
 
  // DELETE /v1/delete/machine/{id}
 $app->delete('/v1/delete/machine/{id}', function (Request $request, Response $response, array $args) {
-    $data = CONTROLLER->deleteMachine($request, $response, $args);
+    $data = MACHINE_CONTROLLER->deleteMachine($request, $response, $args);
     return $data;
 });
 
 //POST /v1/machine/{id}/exec
 $app->post('/v1/machine/{id}/exec', function (Request $request, Response $response, array $args ) {
-    $data = CONTROLLER->executeCommand($request, $response, $args);
+    $data = MACHINE_CONTROLLER->executeCommand($request, $response, $args);
     return $data;
 });
 
 // GET /v1/executions
 $app->get('/v1/executions', function (Request $request, Response $response) {
     #require __DIR__ . '/../Views/executionsView.php';
-    $data = CONTROLLER->getAllExecutions($request, $response);
+    $data = MACHINE_CONTROLLER->getAllExecutions($request, $response);
     return $data;
 });
+
+//******************************* TEST PART STARTS*******************************//
+
+// GET /v1/cronjobs
+$app->get('/v1/cronjobs', function (Request $request, Response $response) {
+    $data = CRONJOB_CONTROLLER->getAllCronjobs($request, $response);
+    return $data;
+});
+
+// POST /v1/add/cronjob
+$app->post('/v1/add/cronjob', function (Request $request, Response $response) { 
+    $data = CRONJOB_CONTROLLER->addCronjob($request, $response);
+    return $data;
+});
+
+//******************************* TEST PART ENDS*******************************//
 
 /**
  * Add Error Middleware

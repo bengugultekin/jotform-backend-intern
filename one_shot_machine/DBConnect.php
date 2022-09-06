@@ -53,11 +53,31 @@ class DB {
             echo "\n";
         }
     }
+
+    // Create inital commands table for crontab in the database
+    public function createCronjobsTable() {
+        $sql = "CREATE TABLE cronjobs (
+            id serial PRIMARY KEY,
+            cronjob_command VARCHAR (100),
+            execution_machine_id integer NOT NULL);";
+        try {
+            $db = new DB();
+            $conn = $db->connect();
+            $stmt = $conn->query($sql);
+            echo "Table cronjobs created successfully\n";
+            $db = null;
+        }
+        catch(PDOException $e) {
+            echo $e->getMessage();
+            echo "\n";
+        }
+    }
 }
 
-$test = new DB();
-$test->connect();
-$test->createContainersTable();
-$test->createExecutionsTable();
+$init_db = new DB();
+$init_db->connect();
+$init_db->createContainersTable();
+$init_db->createExecutionsTable();
+$init_db->createCronjobsTable();
 
 ?>
