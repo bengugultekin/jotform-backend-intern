@@ -42,9 +42,15 @@ services:
     - db_network
     - client_network
   
-  ubuntu-service:
+  ubuntu-service-1:
    build: ./ubuntu_machine1
    container_name: ubuntu_client_machine1
+   networks:
+    - client_network
+  
+  ubuntu-service-2:
+   build: ./ubuntu_machine2
+   container_name: ubuntu_client_machine2
    networks:
     - client_network
 
