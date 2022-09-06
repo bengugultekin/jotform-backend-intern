@@ -18,20 +18,21 @@ $app->addRoutingMiddleware();
 
 // GET Home Page
 $app->get('/', function (Request $request, Response $response) {
-    require __DIR__ . '/../Views/homeView.php';  
+    #require __DIR__ . '/../Views/homeView.php';  
     return $response; 
 });
 // GET /v1/machines
 $app->get('/v1/machines', function (Request $request, Response $response) {
-    require __DIR__ . '/../Views/machinesView.php';
-    return $response;
+    #require __DIR__ . '/../Views/machinesView.php';
+    $data = CONTROLLER->getAllMachines($request, $response);
+    return $data;
 });
 
 // GET /v1/machine/{id}
 $app->get('/v1/machine/{id}', function (Request $request, Response $response, array $args) {
-    require __DIR__ . '/../Views/machineView.php';
-    //$data = CONTROLLER->getMachine($request, $response, $args);
-    return $response;
+    #require __DIR__ . '/../Views/machineView.php';
+    $data = CONTROLLER->getMachine($request, $response, $args);
+    return $data;
 });
 
 // POST /v1/add/machine
@@ -60,8 +61,9 @@ $app->post('/v1/machine/{id}/exec', function (Request $request, Response $respon
 
 // GET /v1/executions
 $app->get('/v1/executions', function (Request $request, Response $response) {
-    require __DIR__ . '/../Views/executionsView.php';
-    return $response; 
+    #require __DIR__ . '/../Views/executionsView.php';
+    $data = CONTROLLER->getAllExecutions($request, $response);
+    return $data;
 });
 
 /**

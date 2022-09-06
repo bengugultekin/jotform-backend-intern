@@ -135,6 +135,7 @@ class MachineController {
         $result = EXECUTION_MODEL->getAllExecutions();
 
         if($result['status']) {
+            #print_r($result['data']);
             $response->getBody()->write(json_encode($result['data']));
             return $response
                 ->withHeader("content-type", "application/json")
