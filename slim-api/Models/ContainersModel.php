@@ -1,9 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/../Models/ExecutionsModel.php');
-
-define('EXECUTION_MODEL2', new ExecutionsModel());
-
 class ContainersModel {
 
     private $id;
@@ -188,7 +184,7 @@ class ContainersModel {
                     
                     //Set new sql query to insert it into executions table
                     $cur_date = date_timestamp_get(date_create());
-                    $exec_msg= EXECUTION_MODEL2->postExecution($id, $user_cmd, $exec_result, $cur_date);
+                    $exec_msg= EXECUTION_MODEL->postExecution($id, $user_cmd, $exec_result, $cur_date);
                     // Make db null so that we do not get error when we do another db request
                     $db = null;
                     $query_result = array(
