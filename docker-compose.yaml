@@ -15,6 +15,9 @@ services:
     - type: bind
       source: ./slim-api/public
       target: /home/slim/slim-api/public
+    - type: bind
+      source: ./frontend-demo
+      target: /home/frontend
    networks:
     - db_network
     - client_network
