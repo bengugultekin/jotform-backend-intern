@@ -12,6 +12,7 @@ $app = AppFactory::create();
 define('MACHINE_CONTROLLER', new MachineController());
 define('CRONJOB_CONTROLLER', new CronjobController());
 
+header("Access-Control-Allow-Origin: *");
 /**
   * The routing middleware should be added earlier than the ErrorMiddleware
   * Otherwise exceptions thrown from it will not be handled by the middleware
