@@ -35,6 +35,34 @@ class ExecutionsModel {
         }
     }
 
+    // GET all executions
+    function getAllExecutionsOfMachine($id) {
+        try {
+            $sql = "SELECT * FROM $this->tableName WHERE container_id = :container_id";
+            $db = new DB();
+            $conn = $db->connect();
+            $exec_stmt = $conn->prepare($sql);
+            $exec_stmt->bindParam(':container_id', $id);
+            $exec_stmt->execute();
+            // Make db null so that we do not get error when we do another db request
+            $db = null;
+            $executions = $exec_stmt->fetchAll(PDO::FETCH_OBJ);
+            // Make db null so that we do not get error when we do another db request
+            $db = null;
+            $query_result = array(
+                "status" => true,
+                "data" => $executions);
+
+            return $query_result;
+        }
+        catch (PDOException $e) {
+            $query_result = array(
+                "status" => false,
+                "message" => $e->getMessage());
+            return $query_result;
+        }
+    }
+
     // POST execution
     function postExecution($id, $user_cmd, $exec_result, $cur_date) {
         try {
@@ -63,5 +91,3 @@ class ExecutionsModel {
         }
     }
 }
-
-?>

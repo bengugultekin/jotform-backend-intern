@@ -69,6 +69,13 @@ $app->get('/v1/executions', function (Request $request, Response $response) {
     return $data;
 });
 
+// GET /v1/executions/{id}
+$app->get('/v1/executions/{id}', function (Request $request, Response $response, array $args) {
+    #require __DIR__ . '/../Views/executionsView.php';
+    $data = MACHINE_CONTROLLER->getAllExecutionsOfMachine($request, $response, $args);
+    return $data;
+});
+
 //******************************* TEST PART STARTS*******************************//
 
 // GET /v1/cronjobs

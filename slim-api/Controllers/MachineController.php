@@ -148,4 +148,22 @@ class MachineController {
                 ->withStatus(500);
         }
     }
+    public function getAllExecutionsOfMachine(Request $request, Response $response, array $args) {
+        $id = $args['id'];
+        $result = EXECUTION_MODEL->getAllExecutionsOfMachine($id);
+
+        if($result['status']) {
+            #print_r($result['data']);
+            $response->getBody()->write(json_encode($result['data']));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(200);
+        }
+        else {
+            $response->getBody()->write(json_encode($result['message']));
+            return $response
+                ->withHeader("content-type", "application/json")
+                ->withStatus(500);
+        }
+    }
 }

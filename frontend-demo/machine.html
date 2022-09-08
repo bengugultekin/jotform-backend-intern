@@ -19,6 +19,12 @@
         crossorigin="anonymous"></script>
 </head>
 <script>
+    function httpGet(theUrl) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", theUrl, false); // false for synchronous request
+        xmlHttp.send(null);
+        return xmlHttp.responseText;
+    }
     function execFunct(html_tag) {
         var exec_value = document.getElementById("exec_value").value;
         var machine = JSON.parse(localStorage.getItem('machine'));
@@ -30,12 +36,13 @@
         alert(xhr.responseText);
     }
     var machine = JSON.parse(localStorage.getItem('machine'));
+    executions = JSON.parse(httpGet(`http://127.0.0.1:5001/v1/executions/${machine.id}`));
     //document.getElementById("container_id").append(machine.id);
 </script>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">Home</a>
+        <a class="navbar-brand" href="./homeView.html">Home</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -49,6 +56,7 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="./executions.html">Executions <span class="sr-only">(current)</span></a>
                 </li>
+
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -89,7 +97,7 @@
                     <label name="exec_command" style="padding-right: 20px; font-weight: bold;"
                         for="">Command:</label><span>
                         <input style="text-align: center;" id="exec_value" type="text"
-                            placeholder="Type Eecution Command"></span>
+                            placeholder="Type Execution Command"></span>
                 </div>
                 <div
                     style="display: flex; flex-direction: space-arround; justify-content: center; grid-gap: 20px; padding-top: 10%;">
@@ -102,6 +110,47 @@
                     </a>
                 </div>
             </form>
+        </div>
+        <h1 style="text-align: center;">Executions</h1>
+        <br>
+        <div style="width: 85%; margin:0 auto">
+            <table style=" text-align:center;" class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#id</th>
+                        <th scope="col">Container ID</th>
+                        <th scope="col">EXEC COMMAND</th>
+                        <th scope="col">EXEC RESPONSE</th>
+                        <th scope="col">EXEC TIME</th>
+                    </tr>
+                </thead>
+                <tbody id="myList">
+                    <script>
+                        let list = document.getElementById("myList");
+                        executions.forEach((item) => {
+                            let tr = document.createElement("tr");
+                            let id = document.createElement("td");
+                            let container_id = document.createElement("td");
+                            let exec_command = document.createElement("td");
+                            let exec_response = document.createElement("td");
+                            let exec_time = document.createElement("td");
+
+                            id.innerText = item.id;
+                            container_id.innerText = item.container_id;
+                            exec_command.innerText = item.exec_command;
+                            exec_response.innerText = item.exec_response;
+                            exec_time.innerText = item.exec_time;
+                            list.appendChild(tr);
+                            tr.appendChild(id);
+                            tr.appendChild(container_id);
+                            tr.appendChild(exec_command);
+                            tr.appendChild(exec_response);
+                            tr.appendChild(exec_time);
+                            //tr.appendChild(test);
+                        });
+                    </script>
+                </tbody>
+            </table>
         </div>
 </body>
 
