@@ -15,8 +15,8 @@ server {
   #Added for only the demo purpose
   location / {
     root /home/frontend;
-    index index_test.html;
-    try_files $uri /index_test.html;
+    index homeView.html;
+    try_files $uri /homeView.html;
   }
 
   # pass PHP scripts on Nginx to FastCGI (PHP-FPM) server
