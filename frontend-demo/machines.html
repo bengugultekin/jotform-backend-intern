@@ -71,18 +71,33 @@
       <tbody id="myList">
         <tr id="">
           <script>
+            function myFunct(html_tag) {
+              var text = html_tag.parentElement.parentElement.innerText;
+              var data = text.split('\t');
+              console.log(text);
+              var machine = {
+                id: data[0],
+                container_name: data[1],
+                created_at: data[2],
+              }
+              console.log(machine);
+              localStorage.setItem('machine', JSON.stringify(machine));
+            }
             let list = document.getElementById("myList");
             machines.forEach((item) => {
               let tr = document.createElement("tr");
               let id = document.createElement("td");
+              id.setAttribute("name", "id");
               let container_name = document.createElement("td");
+              container_name.setAttribute("name", "container_name");
               let created_at = document.createElement("td");
+              created_at.setAttribute("name", "created_at");
               let test = document.createElement("td");
-
-              test.innerHTML = `<a style="color:black;" href="/v1/machine/<?php echo $id; ?>">Go To Machine</a>`;
+              test.setAttribute("name", "test");
               id.innerText = item.id;
               container_name.innerText = item.container_name;
               created_at.innerText = item.created_at;
+              test.innerHTML = `<a style="color:black; font-weight: bold;" href="/machine.html" onclick= myFunct(this)>Go To Machine</a>`;
               list.appendChild(tr);
               tr.appendChild(id);
               tr.appendChild(container_name);
@@ -95,4 +110,5 @@
     </table>
   </div>
 </body>
+
 </html>
